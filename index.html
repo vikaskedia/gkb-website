@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go Kids Biz - World's Best Lemonade</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-yellow-50">
+    <div id="app" class="min-h-screen">
+        <nav class="bg-yellow-400 p-4 shadow-md">
+            <div class="container mx-auto flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-yellow-800">Go Kids Biz</h1>
+                <div class="space-x-4">
+                    <a href="#about" class="text-yellow-900 hover:text-yellow-700">Find Us</a>
+                    <a href="#game" class="text-yellow-900 hover:text-yellow-700">Play Game</a>
+                </div>
+            </div>
+        </nav>
+
+        <main>
+            <!-- Hero Section -->
+            <section class="container mx-auto py-16 px-4">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-8">
+                    <div class="md:w-1/2 text-center md:text-left">
+                        <h2 class="text-4xl font-bold text-yellow-800 mb-4">The World's Best Lemonade</h2>
+                        <p class="text-xl text-yellow-700 mb-8">Made with love, sunshine, and a sprinkle of entrepreneurial spirit!</p>
+                        <button @click="showLocation" class="bg-yellow-500 text-white px-8 py-3 rounded-full hover:bg-yellow-600 transition">
+                            Come Visit Us
+                        </button>
+                    </div>
+                    <div class="md:w-1/2 flex justify-center">
+                        <img src="images/border-collie.png" alt="Go Kids Biz Mascot" class="w-64 h-64 object-cover rounded-full shadow-lg border-4 border-yellow-400">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Shop Section -->
+            <section id="shop" class="bg-white py-16">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-3xl font-bold text-center text-yellow-800 mb-12">Our Products</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="bg-yellow-50 p-6 rounded-lg shadow-md">
+                            <img src="images/classic-lemonade.jpg" alt="Classic Lemonade" class="w-full h-48 object-cover rounded mb-4">
+                            <h3 class="text-xl font-bold text-yellow-800">Classic Lemonade</h3>
+                            <p class="text-yellow-700 mb-4">Our signature recipe that started it all!</p>
+                            <p class="text-xl font-bold text-yellow-800">$2.00</p>
+                        </div>
+                        <div class="bg-yellow-50 p-6 rounded-lg shadow-md">
+                            <img src="images/frozen-lemonade.jpg" alt="Frozen Lemonade" class="w-full h-48 object-cover rounded mb-4">
+                            <h3 class="text-xl font-bold text-yellow-800">Frozen Lemonade</h3>
+                            <p class="text-yellow-700 mb-4">A refreshing slushy treat for hot summer days!</p>
+                            <p class="text-xl font-bold text-yellow-800">$2.00</p>
+                        </div>
+                        <div class="bg-yellow-50 p-6 rounded-lg shadow-md">
+                            <img src="images/special-lemonade.jpg" alt="Special Lemonade" class="w-full h-48 object-cover rounded mb-4">
+                            <h3 class="text-xl font-bold text-yellow-800">Special Lemonade</h3>
+                            <p class="text-yellow-700 mb-4">Our secret blend of flavors for the adventurous!</p>
+                            <p class="text-xl font-bold text-yellow-800">$2.00</p>
+                        </div>
+                        <!-- Add more products as needed -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Game Section -->
+            <section id="game" class="bg-yellow-100 py-16">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-3xl font-bold text-center text-yellow-800 mb-8">Run Your Own Lemonade Stand!</h2>
+                    <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg" v-cloak>
+                        <canvas id="gameCanvas" width="800" height="400" class="mb-4 border rounded-lg"></canvas>
+                        <div v-if="!gameStarted">
+                            <p class="text-lg text-yellow-700 mb-4">Learn business basics while having fun! Start your virtual lemonade stand today.</p>
+                            <button @click="startGame" class="bg-yellow-500 text-white px-6 py-2 rounded-full hover:bg-yellow-600 transition">
+                                Start Game
+                            </button>
+                        </div>
+                        <div v-else class="flex justify-between items-center">
+                            <div>
+                                <p class="text-lg">Day {{ currentDay }} | Money: ${{ money.toFixed(2) }}</p>
+                                <div class="mt-4">
+                                    <label class="block mb-2">Set your price per cup:</label>
+                                    <input v-model.number="price" type="number" min="0.25" step="0.25" class="border p-2 rounded">
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button @click="sellLemonade" class="bg-yellow-500 text-white px-6 py-2 rounded-full hover:bg-yellow-600 transition">
+                                    Open Stand
+                                </button>
+                                <button @click="toggleMusic" class="ml-4 bg-yellow-300 text-yellow-800 px-6 py-2 rounded-full hover:bg-yellow-400 transition">
+                                    {{ isMusicPlaying ? '🔇 Mute' : '🔊 Play Music' }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="bg-yellow-400 py-8">
+            <div class="container mx-auto px-4 text-center text-yellow-900">
+                <p>&copy; 2023 Go Kids Biz. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const { createApp } = Vue
+
+        createApp({
+            data() {
+                return {
+                    gameStarted: false,
+                    currentDay: 1,
+                    money: 10.00,
+                    price: 1.00,
+                    canvas: null,
+                    ctx: null,
+                    sprites: {},
+                    isMusicPlaying: false,
+                    backgroundMusic: new Audio('sounds/happy-background.mp3'),
+                    sellSound: new Audio('sounds/cash-register.mp3')
+                }
+            },
+            mounted() {
+                this.canvas = document.getElementById('gameCanvas')
+                this.ctx = this.canvas.getContext('2d')
+                this.loadSprites()
+                this.backgroundMusic.loop = true
+            },
+            methods: {
+                loadSprites() {
+                    const spriteUrls = {
+                        stand: 'images/lemonade-stand.jpg',
+                        customer: 'images/customer.png',
+                        background: 'images/summer-background.png'
+                    }
+                    
+                    for (const [key, url] of Object.entries(spriteUrls)) {
+                        const img = new Image()
+                        img.onerror = () => console.error(`Failed to load sprite: ${url}`)
+                        img.src = url
+                        this.sprites[key] = img
+                    }
+                },
+                drawGame() {
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+                    
+                    // Draw background
+                    if (this.sprites.background) {
+                        this.ctx.drawImage(this.sprites.background, 0, 0, this.canvas.width, this.canvas.height)
+                    }
+                    
+                    // Draw stand
+                    if (this.sprites.stand) {
+                        this.ctx.drawImage(this.sprites.stand, 300, 200, 200, 150)
+                    }
+                },
+                toggleMusic() {
+                    if (this.isMusicPlaying) {
+                        this.backgroundMusic.pause()
+                    } else {
+                        this.backgroundMusic.play()
+                    }
+                    this.isMusicPlaying = !this.isMusicPlaying
+                },
+                startGame() {
+                    this.gameStarted = true
+                    this.money = 10.00
+                    this.currentDay = 1
+                    this.drawGame()
+                },
+                async sellLemonade() {
+                    const customers = Math.floor(Math.random() * 20) + 5
+                    const sales = Math.floor(customers * (2 - this.price/2))
+                    const revenue = sales * this.price
+                    const costs = sales * 0.25
+                    const profit = revenue - costs
+                    
+                    // Animate customers
+                    for (let i = 0; i < sales; i++) {
+                        await this.animateCustomer()
+                    }
+                    
+                    this.sellSound.play()
+                    this.money += profit
+                    this.currentDay++
+                    
+                    alert(`Day Summary:
+                    Customers: ${customers}
+                    Sales: ${sales} cups
+                    Revenue: $${revenue.toFixed(2)}
+                    Profit: $${profit.toFixed(2)}`)
+                },
+                async animateCustomer() {
+                    return new Promise(resolve => {
+                        let x = -50
+                        const y = 250
+                        
+                        const animate = () => {
+                            this.drawGame()
+                            if (this.sprites.customer) {
+                                this.ctx.drawImage(this.sprites.customer, x, y, 50, 100)
+                            }
+                            
+                            x += 5
+                            if (x < 250) {
+                                requestAnimationFrame(animate)
+                            } else {
+                                setTimeout(resolve, 100)
+                            }
+                        }
+                        animate()
+                    })
+                },
+                showLocation() {
+                    alert("Find us every Sunday at the California Avenue Farmers Market!");
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>
